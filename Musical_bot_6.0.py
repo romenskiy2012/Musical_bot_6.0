@@ -79,6 +79,14 @@ import download
 
 
 ### Подготовка
+a = True
+list = os.listdir()
+for list_2 in list:
+    if list_2 == "Music":
+        print("Такой фаел есть!")
+        a = False
+if a == True:
+    os.mkdir("Music")
 
 #os.rmdir("Music")
 #os.mkdir("Music")
