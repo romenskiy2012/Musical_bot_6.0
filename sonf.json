@@ -1,7 +1,8 @@
 {
-    "prefix": "/",
+    "prefix": "!",
     "token": "",
     "bot_id": ,
+    "preview": "https://cdn.discordapp.com/attachments/587366302780358688/871057371198259200/12.png",
     "admin_list": [],
     "black_leaf": []
 }

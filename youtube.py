@@ -1,15 +1,20 @@
 import youtube_dl
+import yt_dlp
 import os
-print("youtube подключен!")  
+put = os.path.dirname(os.path.realpath(__file__)) + "/"#Путь- (part-1)
+#print("youtube подключен!")
+
+DEBUG = True
+
 
 def start(url):
     if start_1(url):
-        print("Это ютуб длинный.")
+        if DEBUG:print("Это ютуб длинный.")
         return True
     if start_2(url):
-        print("Это ютуб короткий.")
+        if DEBUG:print("Это ютуб короткий.")
         return True
-    print("Это не длинный и не короткий ютуб.")
+    if DEBUG:print("Это не длинный и не короткий ютуб.")
     return False
 
 def start_1(url):
@@ -57,7 +62,7 @@ def start_1(url):
                 return False
     #print(TIN)
     #return TIN
-    print("Всё!")
+    if DEBUG:print("Всё!")
 
 def start_2(url):
     sas312 = ['y', 'o', 'u', 't', 'u', '.', 'b', 'e']
@@ -104,11 +109,28 @@ def start_2(url):
                 return False
     #print(TIN)
     #return TIN
-    print("Всё!")
+    if DEBUG:print("Всё!")
 
 
 def start_list(url):
-    print("Это не плей лист")
+    f = []
+    f.extend ("list")
+    
+    f2 = []
+    f2.extend (url)
+    a = 0
+    
+    for list_2 in f2:
+        if a == len(f):
+            if DEBUG:print("Это плей лист")
+            return True
+        if DEBUG:print(list_2)
+        if list_2 == f[a]:
+            a = a + 1
+        else:
+            a = 0
+    
+    if DEBUG:print("Это не плей лист")
     TIN = False
     #return TIN
     #return True
@@ -117,21 +139,21 @@ def start_list(url):
 
 def start_IF(Question,guild_id,user_id):
     from time import strftime, localtime, sleep #Для (Time)
-    print(Question)
-    print(Question[0][0])
+    if DEBUG:print(Question)
+    if DEBUG:print(Question[0][0])
     a = True
     X = 0
     while a != 10:
-        print(Question[1][X])
-        print(Question[1][X])
+        if DEBUG:print(Question[1][X])
+        if DEBUG:print(Question[1][X])
         if user_id == Question[0][X] and guild_id == Question[1][X]:
         #if user_id == Question[X][0]:
             if Question[2][X] == "y":
                 # Да это плейлист.
-                print("Да это плейлист")
+                if DEBUG:print("Да это плейлист")
             elif Question[2][X] == "n":
                 # Нет это не плейлист.
-                print("Нет это не плейлист")
+                if DEBUG:print("Нет это не плейлист")
         
             else:
             #if "001" == Question[0][X]:
@@ -147,8 +169,8 @@ def start_IF(Question,guild_id,user_id):
 
         #Question[1,1]
 
-def don(url,id,message, name):
-    print(f"Качаем - {name}")
+def don(url,id, name):
+    if DEBUG:print(f"Качаем - {name}")
     fael = False
     '''
     #guild_name = message.author.guild.name
@@ -164,6 +186,7 @@ def don(url,id,message, name):
     ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': sasss,
+            'quiet': True,
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'opus', #.opus
@@ -175,14 +198,15 @@ def don(url,id,message, name):
         }
     
     
-    print("Скачивание аудио сейчас\n")
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+    if DEBUG:print("Скачивание аудио сейчас\n")
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
 
 
 
 def yyy(channel_id):
-    ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
+    #try:
+    ydl = yt_dlp.YoutubeDL({'outtmpl': '%(id)s%(ext)s', 'quiet': True})
     #global video
     with ydl:
         result = ydl.extract_info(
@@ -197,8 +221,54 @@ def yyy(channel_id):
             video = result
 
 
-    
+
     #global GAMENAME, GAMENAME2
     GAMENAME = video['duration']#Игра
-    print("Видео идёт - ",GAMENAME)
+    #print("Видео идёт - ",GAMENAME)
+    #except(FileNotFoundError):
+        #return None, 1
+    #return video, 0
     return video
+
+
+def playlist_pars(url:str):
+    Q = []
+    A = []
+    Q.extend(url)
+    A.extend("list=")
+    fu = 0
+    G = False
+    url_2 = ""
+    for T in Q:
+        if G:
+            if T == "&":
+                return url_2
+            url_2 = url_2 + T
+        else:
+            if T == A[fu]:
+                fu = fu + 1
+                if fu == len(A):
+                    G = True
+    return url_2
+
+print(playlist_pars("https://www.youtube.com/watch?v=I47cB9WHqsI&list=PLgb2J1R5MXUhormAy4NWfY77ytqK4fyQx&index=1"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
