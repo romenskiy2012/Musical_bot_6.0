@@ -26,4 +26,4 @@
 
 ![unknown.png](https://cdn.discordapp.com/attachments/587366302780358688/941190203182284830/unknown.png) 
 
-![unknown.png](cdn.discordapp.com/attachments/587366302780358688/941190277027205170/unknown.png)
+![unknown.png](https://cdn.discordapp.com/attachments/587366302780358688/941190277027205170/unknown.png)
