@@ -24,6 +24,6 @@
 
 # Внешний вид
 
-![alt text](cdn.discordapp.com/attachments/587366302780358688/941190203182284830/unknown.png =750x) 
+![alt text](cdn.discordapp.com/attachments/587366302780358688/941190203182284830/unknown.png) 
 
 ![unknown.png](cdn.discordapp.com/attachments/587366302780358688/941190277027205170/unknown.png =750x)
