@@ -1,5 +1,5 @@
 import youtube_dl
-import yt_dlp
+import yt_dlp # yt-dlp
 import os
 put = os.path.dirname(os.path.realpath(__file__)) + "/"#Путь- (part-1)
 #print("youtube подключен!")

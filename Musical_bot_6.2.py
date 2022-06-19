@@ -76,7 +76,7 @@ nprint("Подключения дискорд API")
 import os
 from threading import Thread
 from subprocess import call
-from time import strftime, localtime, sleep, time#Для (Time)
+from time import strftime, localtime, sleep, time, gmtime#Для (Time)
 
 #import time
 import random
@@ -110,6 +110,9 @@ nprint("Подключения download")
 import water_handler
 nprint("Подключения water_handler")
 import time_translation
+
+import time_mark
+import bot_gui
 ####################################
 
 
@@ -118,7 +121,7 @@ import time_translation
 SQL_Q = [[], [], [], [], [], [], []]
 
 
-SQL_Q = bd_module.db_add()
+SQL_Q = bd_module.db_add(SQL_Q)
 
 #print(SQL_Q[5][0])
 '''
@@ -265,7 +268,7 @@ async def sing_k8ifg4(id, name_2, volume, time, views, estimation, date, message
     else:
         put_it_on = f"<@{put_it_on}>"
 
-    lll = f"{name_2}\n👀 {views} 👍 {estimation} 🗓️ {date} \n💾 {uploaded} \n💾🗓️ {upload_date} \n✅ {put_it_on} \nТрек готов за {время3} Сек !\n{start_position} - {time}"
+    lll = f"{name_2}\n👀 {views} 👍 {estimation} 🗓️ {date} \n💾 {uploaded} \n💾🗓️ {upload_date} \n✅ {put_it_on} \nТрек готов за {preparation_time3} Сек !\n{start_position} - {time}"
 
 
 
@@ -302,9 +305,47 @@ def convert_to_preferred_format(sec):
     else:
         return (f"{hour}:{min}:{sec}")
 
+theme = 2
 
 
-async def timeline(message, time_SSS, lll, index, start_position):
+
+async def timeline(message, time_SSS, lll, index, start_position, description):
+    description_list = ""
+    if description != None or description != "":
+        hub_time, hub_name = time_mark.init_read(description)
+    if len(hub_name) == len(hub_time):
+        a = 0
+        for hub_time_l in hub_time:
+            description_list = description_list + f"{hub_time_l} - {hub_name[a]}\n"
+            a = a + 1
+    else:
+        print(f"!!!КОНФЛИКТ!!!\n{len(hub_name)} != {len(hub_time)}")
+    def description_list_target_ALL(hub_time, hub_name, target_id):
+        description_list_target = ""
+        if len(hub_name) == len(hub_time):
+            a = 0
+            for hub_time_l in hub_time:
+                ty_res = gmtime(hub_time_l)
+                res = strftime("%H:%M:%S",ty_res)
+                #print(res)
+                if a == target_id:
+                    description_list_target = description_list_target + f"➡️ `{res}` - {hub_name[a]} ⬅️\n"
+                else:
+                    description_list_target = description_list_target + f"🔘 `{res}` - {hub_name[a]}\n"
+                a = a + 1
+        else:
+            print(f"!!!КОНФЛИКТ!!!\n{len(hub_name)} != {len(hub_time)}")
+        #print(description_list_target)
+        return description_list_target
+    def ALA(start_position, hub_time, hub_name):
+        M = 0
+        for L in hub_time:
+            if L >= start_position:
+                if len(hub_name) >= M:
+                    return hub_name[M - 1], M - 1
+            M = M + 1
+        return None
+    slips_l = 10
     L_1 = "```\n╔════════════════════════════════╗\n"
     L_3 = "\n╚════════════════════════════════╝```"
     id_jgkihjkf = int(message.author.guild.id)
@@ -316,18 +357,26 @@ async def timeline(message, time_SSS, lll, index, start_position):
         a = a + 1
     print("Жив ?")
     await asyncio.sleep(5)
+    start_position = int(start_position) + 5
     print("Жив ?2")
     msg_sa = await bot.get_guild(id_jgkihjkf).get_channel(channel_id).fetch_message(qm2)
     while bd_module.checking_the_timeline(index):
-        start_position = int(start_position) + 5
         time_p = time_SSS/100
         time_pS = int(start_position/time_p)
         i = int(int(time_pS)*0.3)
         L_2 = f"║ {'█' * i}{' ' * (30 - i)} ║ "
         time_SSS_Q = convert_to_preferred_format(time_SSS)
         start_position_Q = convert_to_preferred_format(start_position)
-        bot.loop.create_task(msg_sa.edit(content=(f"{lll}{L_1+L_2+L_3}{start_position_Q} - {time_SSS_Q} {time_pS}%")))
-        await asyncio.sleep(5)
+        name, target_id = ALA(start_position, hub_time, hub_name)
+        if theme == 0:
+            bot.loop.create_task(msg_sa.edit(content=(f"{lll}{L_1+L_2+L_3}{start_position_Q} - {time_SSS_Q} {time_pS}%\n➡️ {name} ⬅️")))
+        elif theme == 1:
+            bot.loop.create_task(msg_sa.edit(content=(f"{lll}{L_1+L_2+L_3}{start_position_Q} - {time_SSS_Q} {time_pS}%\n{description_list}")))
+        elif theme == 2:
+            description_list_target = description_list_target_ALL(hub_time, hub_name, target_id)
+            bot.loop.create_task(msg_sa.edit(content=(f"{lll}{L_1+L_2+L_3}{start_position_Q} - {time_SSS_Q} {time_pS}%\n{description_list_target}")))
+        await asyncio.sleep(slips_l)
+        start_position = int(start_position) + slips_l
 """
 async def timeline(message, time_SSS, voice, lll, index):
     sor = ""
@@ -371,7 +420,7 @@ async def timeline(message, time_SSS, voice, lll, index):
 def sing(message,id, put_it_on, start_position):  ################## ПЕТЬ!
     print(id)
 
-    name_2, volume, time, views, estimation, date, uploaded, upload_date, thumbnail = bd_module.search_ID(id)
+    name_2, volume, time, views, estimation, date, uploaded, upload_date, thumbnail, description = bd_module.search_ID(id)
 
     bot.loop.create_task(sing_k8ifg4(id, name_2, volume, time, views, estimation, date, message, uploaded, upload_date, put_it_on, thumbnail, start_position))
     #sing_k8ifg4(id, name_2, volume, time, views, estimation, date, message)
@@ -393,7 +442,7 @@ def sing(message,id, put_it_on, start_position):  ################## ПЕТЬ!
     else:
         put_it_on = f"<@{put_it_on}>"
 
-    lll = f"{name_2}\n👀 {views} 👍 {estimation} 🗓️ {date} \n💾 {uploaded} \n💾🗓️ {upload_date} \n✅ {put_it_on} \nТрек готов за {время3} Сек !"
+    lll = f"{name_2}\n👀 {views} 👍 {estimation} 🗓️ {date} \n💾 {uploaded} \n💾🗓️ {upload_date} \n✅ {put_it_on} \nТрек готов за {preparation_time3} Сек !"
 
 
     index = str(random.randint(0, 100000)) + str(random.randint(0, 100000))
@@ -414,7 +463,8 @@ def sing(message,id, put_it_on, start_position):  ################## ПЕТЬ!
     voice.source = discord.PCMVolumeTransformer(voice.source)
     voice.source.volume = volume1
     
-    bot.loop.create_task(timeline(message, time, lll, index, start_position))
+    #bot.loop.create_task(timeline(message, time, lll, index, start_position, description)) #
+    bot.loop.create_task(bot_gui.timeline(bot, SQL_Q, message, time, lll, index, start_position, description))
 
 
 
@@ -458,13 +508,13 @@ async def messenger(message,url): # №1  Проверкак что это.
         if youtube.start_list(url):# Очеридь ли ?
             if DEBUG: print("Заглушка")
             #qwestion(url, Turn, id, id_channel, message)
-            #id = water_handler.youtube(url)
-            #url = f"https://www.youtube.com/watch?v={id}" ### ВНИМАНИЕ!!! ЗАГЛУШКА!!!
-            bot.loop.create_task(qwestion(url, message))
+            id = water_handler.youtube(url) ### ВНИМАНИЕ!!! ЗАГЛУШКА!!!
+            url = f"https://www.youtube.com/watch?v={id}" ### ВНИМАНИЕ!!! ЗАГЛУШКА!!!
+            #bot.loop.create_task(qwestion(url, message)) # TODO Очередь не доделона, донако этот кусое её включит, (Перед этим закоментируйте заглушки рядом.)
             print("SAS111")
             #asyncio.run(qwestion(url, message))
             print("SAS222")
-            #messenger(message,url)
+            await messenger(message,url) ### ВНИМАНИЕ!!! ЗАГЛУШКА!!!
 
             pass
         else:
@@ -481,11 +531,11 @@ async def messenger(message,url): # №1  Проверкак что это.
 
             #youtube.don(url)# Скачать
             if DEBUG: print("Готово")
-            время2 = time()
-            global время3
-            время3 = (время2 - время)
-            время3 = round(время3, 2)
-            if DEBUG: print(время3)
+            preparation_time2 = time()
+            global preparation_time3
+            preparation_time3 = (preparation_time2 - preparation_time)
+            preparation_time3 = round(preparation_time3, 2)
+            if DEBUG: print(preparation_time3)
             if DEBUG: print("3")
             put_it_on = message.author.id
             await messenger_2(message,url, id, put_it_on, name)
@@ -621,8 +671,8 @@ async def http(url, Turn, id, id_channel, message):
 
 
 
-время = ()
-время3 = ()
+preparation_time = ()
+preparation_time3 = ()
 
 # BEGIN Консольные команды.
 
@@ -824,7 +874,7 @@ async def on_message(message):
                             url = f"https://www.youtube.com/watch?v={id}"
                             id = await download.youtube_d(url,message)
                             put_it_on = message.author.id
-                            await messenger_2(message,url, id, put_it_on)
+                            #await messenger_2(message,url, id, put_it_on, name) Имени нету!!!
 
 
 
@@ -835,8 +885,8 @@ async def on_message(message):
 
 
                 elif message.content != (''):
-                    global время
-                    время = time()
+                    global preparation_time
+                    preparation_time = time()
                     id = message.author.guild.id
                     id_channel = message.channel.id
                     url = message.content

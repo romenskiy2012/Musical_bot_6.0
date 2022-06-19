@@ -62,10 +62,10 @@ r = redis.StrictRedis(
 )
 
 
-def creature_playlist(message,url,naim):
-    r.rpush(f'queue:{message.author.guild.id}:playlist:{url}:1', user_id) # id
-    r.rpush(f'queue:{message.author.guild.id}:playlist:{url}:2', user_id) # Имя
-    r.rpush(f'queue:{message.author.guild.id}:playlist:{url}:3', user_id) # Статус
+#def creature_playlist(message,url,naim):
+#    r.rpush(f'queue:{message.author.guild.id}:playlist:{url}:1', user_id) # id
+#    r.rpush(f'queue:{message.author.guild.id}:playlist:{url}:2', user_id) # Имя
+#    r.rpush(f'queue:{message.author.guild.id}:playlist:{url}:3', user_id) # Статус
 
 
 # BEGIN Проверка шкалы времени.
@@ -249,7 +249,7 @@ def qwestion_bd_search(message):
 
 def qwestion_bd_rm(message_id):
     #print(message_id)
-    sql.execute(f"DELETE FROM Musical_bot_bd.choice WHERE txt_1 LIKE {message_id} LIMIT 1")
+    sql.execute(f"DELETE FROM Musical_bot_bd.choice WHERE txt_1 LIKE ? LIMIT 1", (message_id,))
     bd.commit()
     #print("ДА!")
 # END
@@ -257,7 +257,7 @@ def qwestion_bd_rm(message_id):
 def add(message,Turn,txt_1,txt_2,txt_3):
 
 
-    sql.execute("SELECT server FROM Musical_bot_bd.B WHERE server = '?'", message.author.guild.name)
+    sql.execute("SELECT server FROM Musical_bot_bd.B WHERE server = ?", (message.author.guild.name,))
     if sql.fetchone() is None:
         sql.execute("INSERT INTO Musical_bot_bd.B VALUES (?, ?, ?, ?, ?, ?, ?)", (message.author.guild.name, message.author.guild.id, message.channel.name, message.channel.id, txt_1, txt_2, txt_3))
         bd.commit()
@@ -284,85 +284,6 @@ def add(message,Turn,txt_1,txt_2,txt_3):
 
     bd.commit()
 
-# BEGIN queue  очередь
-"""
-def adding_to_the_queue(message, id, name, user_id):# добавление в очередь
-
-    print(id)
-    sql.execute(f"INSERT INTO Musical_bot_bd_queue.{message.author.guild.id} VALUES(?, ?, ?)", (id, user_id, name))
-    bd.commit()
-
-
-
-
-def deleting_a_queue_del(message):# Шиза
-
-    sql.execute(f"SELECT * FROM Musical_bot_bd_queue.{message.author.guild.id} LIMIT 1")
-    channel_id = sql.fetchall()
-    print(channel_id)
-    print(len(channel_id))
-    if len(channel_id) != 0:
-        channel_id = channel_id[0][0]
-        print(channel_id)
-        sql.execute(f"DELETE FROM Musical_bot_bd_queue.{message.author.guild.id} WHERE queue LIKE '{channel_id}' LIMIT 1")
-        bd.commit()
-
-
-def deleting_a_queue(message):# удаление очереди
-    sql.execute(f"DELETE FROM Musical_bot_bd_queue.{message.author.guild.id} LIMIT 1")
-    bd.commit()
-
-"""
-"""
-1: `Научно-технический рэп -  Костыль и велосипед`
-URL - `https://youtu.be/wjFgOckkVYM`
-Поставил - <@198886008635260929>
-
-2:`SQWOZ BAB, THE FIRST STATION — АУФ (Right Version) ♂️ Gachi Remix`
-URL - `https://youtu.be/E5r-CbNs1uc`
-Поставил - <@233962119106789376>
-"""
-
-"""
-def reading_from_all_queue(message): # Рисуем очередь
-    sql.execute(f"SELECT * FROM Musical_bot_bd_queue.{message.author.guild.id}")
-    LOFT = sql.fetchall()
-    if  len(LOFT) == 0:
-        return "Пусто"
-    else:
-        A = 0
-        result = ""
-        while A != len(LOFT) + 1: # Маразм!!!
-            LOFT_l = LOFT[A]
-            if LOFT_l[1] == "system":
-                name = "🇸 🇾 🇸 🇹 🇪 🇲"
-            else:
-                name = f"<@{LOFT_l[1]}>"
-            if A == 0:
-                result = result + f"(Сейчас): `{LOFT_l[2]}`\nURL - `https://youtu.be/{LOFT_l[0]}`\nПоставил - {name}\n\n"
-            else:
-                result = result + f"{A}: `{LOFT_l[2]}`\nURL - `https://youtu.be/{LOFT_l[0]}`\nПоставил - {name}\n\n"
-            A = A + 1
-    return result
-
-def reading_from_a_queue(message): # чтение из очереди
-
-    sql.execute(f"SELECT * FROM Musical_bot_bd_queue.{message.author.guild.id} LIMIT 1")
-    LOFT = sql.fetchall()
-    if  len(LOFT) == 0:
-        return "001", "001"
-    LOFT = LOFT[0]
-
-
-    put_it_on = LOFT[1]
-    channel_id = LOFT[0]
-
-    return channel_id, put_it_on
-"""
-# END
-
-
-
 
 def search_random_ID(): # поиск случайного ID
     sql.execute(f"SELECT id, name FROM Musical_bot_bd.ID")
@@ -381,7 +302,7 @@ def search_ID(id):
     print(f"id3 - {id}")
 
     
-    sql.execute(f"SELECT id FROM Musical_bot_bd.ID WHERE id = '{id}'")
+    sql.execute(f"SELECT id FROM Musical_bot_bd.ID WHERE id = ?", (id,))
     if sql.fetchone() is None:
         print(f"Такой фаел не зарегестрирован в базе, доложите системнову адменестраторы или програмисту об этом\n Лог: id - {id}")
         
@@ -389,7 +310,7 @@ def search_ID(id):
 
     else:
 
-        sql.execute(f"SELECT name, volume, time, views, estimation, date, uploaded, upload_date, thumbnail FROM Musical_bot_bd.ID WHERE id = '{id}'")
+        sql.execute(f"SELECT name, volume, time, views, estimation, date, uploaded, upload_date, thumbnail, description FROM Musical_bot_bd.ID WHERE id = ?", (id,))
 
         qm1 = sql.fetchall()[0]
 
@@ -402,8 +323,9 @@ def search_ID(id):
         uploaded = qm1[6]
         upload_date = qm1[7]
         thumbnail = qm1[8]
+        description = qm1[9]
 
-        return name_2, volume, time, views, estimation, date, uploaded, upload_date, thumbnail
+        return name_2, volume, time, views, estimation, date, uploaded, upload_date, thumbnail, description
         
         
     
@@ -415,7 +337,8 @@ def search_ID_rid(id, video, volume, uploaded):
     name = video['title']
     if DEBUG:print(f"name - {name}")
     views = video['view_count']
-    estimation = round(video['average_rating'], 1)
+    #estimation = round(video['average_rating'], 4)
+    estimation = video['average_rating']
     
     video3 = []
     video3.extend (video['upload_date'])
@@ -441,7 +364,7 @@ def search_ID_rid(id, video, volume, uploaded):
     
     if DEBUG:print(thumbnail)
     bd.commit() # mariadb.InterfaceError: Server has gone away ???
-    sql.execute(f"SELECT id FROM Musical_bot_bd.ID WHERE id = '{id}'")
+    sql.execute(f"SELECT id FROM Musical_bot_bd.ID WHERE id = ?", (id,))
     if sql.fetchone() is None:
         sql.execute("INSERT INTO Musical_bot_bd.ID VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (id, name, volume, time, views, estimation, date, uploaded, upload_date, description, thumbnail))
         bd.commit()
@@ -451,30 +374,9 @@ def search_ID_rid(id, video, volume, uploaded):
     
 
 
-    
-    
-    
-def db_add_DEL(SQL_Q): # Код маразматика!
-
-    SQL_Q = [[], [], [], [], [], []]
-
-    naim = ["server","id","channel","channel_id","txt_1","txt_2","txt_3"]
-    f = 0
-    while f != 6:
-        sql.execute(f"SELECT {naim[f]} FROM Musical_bot_bd.B")
-        SQL_Q_L = sql.fetchall()
-        x = 0
-        for id_user in SQL_Q_L:
-            SQL_Q[f].insert(x,id_user[0])
-            x = x + 1
-        f = f + 1
-
-    #print("Даза")
-    return SQL_Q
 
 
-def db_add(): # Код почти здорового человека.
-    SQL_Q = [[], [], [], [], [], [], []]
+def db_add(SQL_Q): # Код почти здорового человека.
     sql.execute(f"SELECT * FROM Musical_bot_bd.B")
     SQL_Q_L = sql.fetchall()
     for S in SQL_Q_L:

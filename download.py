@@ -38,7 +38,7 @@ async def youtube_d(url,message):
             
     if (a == 1):
         if DEBUG:print(f"id2 - {id}")
-        name_2, volume, time, views, estimation, date, uploaded, upload_date, thumbnail = bd_module.search_ID(id)# Получаем инфу из базы (По ключу из сылки имя) # TypeError: cannot unpack non-iterable bool object
+        name_2, volume, time, views, estimation, date, uploaded, upload_date, thumbnail, description = bd_module.search_ID(id)# Получаем инфу из базы (По ключу из сылки имя) # TypeError: cannot unpack non-iterable bool object
         name = f"{put}Music/{id}.opus"
         #bd_module.local(message, id)
         
